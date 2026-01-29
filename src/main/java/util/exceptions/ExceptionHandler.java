@@ -35,6 +35,24 @@ public class ExceptionHandler {
     public static void handleValidationException(String context, String input) {
         String message = buildValidationErrorMessage(context, input);
         printWarning(message);
+        printInfo("Используйте --help для получения справки");
+    }
+
+    /**
+     * Выводит сообщение об ошибке валидации параметров
+     */
+    public static void printParameterError(String error, String recommendation) {
+        if (coloredOutput) {
+            errorStream.println(RED + "[ОШИБКА ПАРАМЕТРОВ] " + error + RESET);
+            if (recommendation != null) {
+                System.out.println(BLUE + "[ПОДСКАЗКА] " + recommendation + RESET);
+            }
+        } else {
+            errorStream.println("[ОШИБКА ПАРАМЕТРОВ] " + error);
+            if (recommendation != null) {
+                System.out.println("[ПОДСКАЗКА] " + recommendation);
+            }
+        }
     }
 
     /**
@@ -81,6 +99,17 @@ public class ExceptionHandler {
         }
     }
 
+    /**
+     * Выводит ошибку (красный цвет)
+     */
+    public static void printError(String message) {
+        if (coloredOutput) {
+            errorStream.println(RED + "[ERROR] " + message + RESET);
+        } else {
+            errorStream.println("[ERROR] " + message);
+        }
+    }
+
     // Приватные вспомогательные методы
     private static String buildErrorMessage(Exception e, String context, String additionalInfo) {
         StringBuilder sb = new StringBuilder();
@@ -102,15 +131,17 @@ public class ExceptionHandler {
                 context, input);
     }
 
-    public static void printError(String message) {
-        if (coloredOutput) {
-            errorStream.println(RED + "[ERROR] " + message + RESET);
-        } else {
-            errorStream.println("[ERROR] " + message);
-        }
+    /**
+     * Отключает цветной вывод (для перенаправления в файл)
+     */
+    public static void disableColoredOutput() {
+        coloredOutput = false;
     }
 
-    /*public static void setErrorStream(PrintStream stream) {
-        errorStream = stream;
-    }*/
+    /**
+     * Включает цветной вывод
+     */
+    public static void enableColoredOutput() {
+        coloredOutput = true;
+    }
 }
