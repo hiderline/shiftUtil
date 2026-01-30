@@ -8,8 +8,9 @@ public class ApplicationFacade {
 
     public void start(String[] args) {
         appConfig.setConfig(args);
-        System.out.println(appConfig.getPathOut());
+
         System.out.println(appConfig.getPrefOut());
+        System.out.println(appConfig.getPathOut());
         System.out.println(appConfig.appendMode());
         System.out.println(appConfig.shortStats());
         System.out.println(appConfig.fullStats());
