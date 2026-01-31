@@ -2,8 +2,8 @@ package util.config;
 
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
+import com.beust.jcommander.ParameterDescription;
 import com.beust.jcommander.ParameterException;
-import com.beust.jcommander.Parameters;
 import util.config.validators.FileNameValidator;
 import util.config.validators.PathValidator;
 import util.config.validators.PrefixValidator;
@@ -41,6 +41,12 @@ public class CliConfig {
     @Parameter(names = {"-f"}, description = "Полная статистика")
     private boolean fullStats;
 
+    public enum StatsLevel {
+        NONE, SHORT, FULL
+    }
+
+    private StatsLevel statsLevel = StatsLevel.NONE;
+
     @Parameter(description = "Входные файлы для обработки",
             required = true,
             validateWith = FileNameValidator.class)
@@ -67,12 +73,22 @@ public class CliConfig {
         return append;
     }
 
-    public boolean shortStats() {
+    /*public boolean isShortStats() {
         return shortStats;
     }
 
-    public boolean fullStats() {
+    public boolean isFullStats() {
         return fullStats;
+    }*/
+
+    public boolean isShortStats() {
+        return statsLevel == StatsLevel.SHORT;
+    }
+    public boolean isFullStats() {
+        return statsLevel == StatsLevel.FULL;
+    }
+    public StatsLevel getStatsLevel() {
+        return statsLevel;
     }
 
     public List<String> getFiles() {

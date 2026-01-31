@@ -6,9 +6,15 @@ public class Validators {
     private Validators() {
         throw new AssertionError("Нельзя создать экземпляр Validators");
     }
-    public static void validateStatistic(String name, String value) throws ParameterException {
-
-    }
+    /*public static void validateStatistic(String name, String value) throws ParameterException {
+        // Проверка взаимоисключающих флагов -s и -f
+        if (shortStats && fullStats) {
+            throw new ValidationException(
+                    "Нельзя использовать одновременно флаги -s (краткая статистика) и -f (полная статистика).\n" +
+                            "Выберите только один тип статистики или не указывайте ни одного."
+            );
+        }
+    }*/
 
     /**
      * Валидация префикса выходных файлов
@@ -131,4 +137,5 @@ public class Validators {
             }
         }
     }
+
 }
