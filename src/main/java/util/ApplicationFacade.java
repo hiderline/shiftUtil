@@ -6,14 +6,13 @@ import util.config.Configuration;
 public class ApplicationFacade {
     private final CliConfig appConfig = CliConfig.getInstance();
 
-    public void start(String[] args) {
-        appConfig.setConfig(args);
+    public void start(String[] args) throws Exception {
+        appConfig.call();
 
-        System.out.println(appConfig.getPrefOut());
-        System.out.println(appConfig.getPathOut());
-        System.out.println(appConfig.appendMode());
-        System.out.println(appConfig.shortStats());
-        System.out.println(appConfig.fullStats());
-        System.out.println(appConfig.getFiles());
+        System.out.println("-p: " + appConfig.getPrefOut());
+        System.out.println("-o: " + appConfig.getPathOut());
+        System.out.println("-a: " + appConfig.appendMode());
+        System.out.println("stats: " + appConfig.getStatsLevel());
+        System.out.println("files: " + appConfig.getFiles());
     }
 }

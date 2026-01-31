@@ -1,9 +1,14 @@
 package util.config;
 
-import com.beust.jcommander.JCommander;
-import com.beust.jcommander.Parameter;
-import com.beust.jcommander.ParameterException;
-import com.beust.jcommander.Parameters;
+
+import picocli.CommandLine;
+import picocli.CommandLine.Command;
+import picocli.CommandLine.Option;
+import picocli.CommandLine.ParameterException;
+import picocli.CommandLine.Parameters;
+import java.util.concurrent.Callable;
+
+import util.config.converters.StatsFlagConverter;
 import util.config.validators.FileNameValidator;
 import util.config.validators.PathValidator;
 import util.config.validators.PrefixValidator;
@@ -12,38 +17,49 @@ import util.exceptions.ExceptionHandler;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CliConfig {
+@Command(
+        name = "util",
+        description = "Утилита для обработки файлов",
+        mixinStandardHelpOptions = true,
+        version = "1.0.0"
+)
+public class CliConfig implements Callable<Integer>{
     public static final CliConfig instance = new CliConfig();
 
-    private JCommander jCommander;
-
-    @Parameter(names = {"--help", "-h"},
+    @Option(names = {"--help", "-h"},
             description = "Показать справку по использованию",
-            help = true)
+            usageHelp = true
+    )
     private boolean help;
 
-    @Parameter(names = {"-o"},
-            description = "Путь для выходных файлов",
-            validateWith = PathValidator.class)
-    private String pathOut = "";
-
-    @Parameter(names = {"-p"},
-            description = "Префикс имени выходных файлов",
-            validateWith = PrefixValidator.class)
+    @Option(names = {"-p"},
+            description = "Префикс имени выходных файлов"
+            //validateWith = PrefixValidator.class
+    )
     private String prefOut = "";
 
-    @Parameter(names = {"-a"}, description = "Режим добавления в существующие файлы")
+    @Option(names = {"-o"},
+            description = "Путь для выходных файлов"
+            //validateWith = PathValidator.class
+    )
+    private String pathOut = "";
+
+    @Option(names = {"-a"}, description = "Режим добавления в существующие файлы")
     private boolean append;
 
-    @Parameter(names = {"-s"}, description = "Краткая статистика")
-    private boolean shortStats;
+    @Option(names = {"-s", "-f"},
+            description = "Статистика: -s для краткой, -f для полной",
+            converter = StatsFlagConverter.class
+    )
+    private StatsLevel statsLevel = StatsLevel.NONE;
 
-    @Parameter(names = {"-f"}, description = "Полная статистика")
-    private boolean fullStats;
-
-    @Parameter(description = "Входные файлы для обработки",
-            required = true,
-            validateWith = FileNameValidator.class)
+    @Option(names = {},
+            description = "Входные файлы для обработки",
+            paramLabel = "<файлы>",
+            arity = "1..*", // Минимум один файл
+            required = true
+            //validateWith = FileNameValidator.class
+    )
     private List<String> files;
 
     public CliConfig() {
@@ -67,38 +83,19 @@ public class CliConfig {
         return append;
     }
 
-    public boolean shortStats() {
-        return shortStats;
-    }
-
-    public boolean fullStats() {
-        return fullStats;
+    public StatsLevel getStatsLevel() {
+        return statsLevel;
     }
 
     public List<String> getFiles() {
         return files == null ? new ArrayList<>() : new ArrayList<>(this.files);
     }
 
-    public void printUsage() {
-        if (jCommander != null) {
-            jCommander.usage();
-        }
-    }
-
-    public void setConfig(String[] args) {
+    public Integer call() throws Exception {
         try {
-            jCommander = JCommander.newBuilder()
-                    .addObject(instance)
-                    .programName("java -jar util.jar")
-                    .build();
+            validateParameters();
 
-            jCommander.parse(args);
 
-            // Если запрошена справка - показываем и выходим
-            if (help) {
-                printUsage();
-                System.exit(0);
-            }
 
         } catch (ParameterException e) {
             handleParameterError(e);
@@ -109,6 +106,11 @@ public class CliConfig {
             System.exit(1);
         }
 */
+        return 0; //Успешное завершение
+    }
+
+    private void validateParameters() {
+
     }
 
     /*private void validateParameters() throws ValidationException {
@@ -211,8 +213,8 @@ public class CliConfig {
         return "неизвестный флаг";
     }
 
-    // Вложенный класс для валидации списка файлов
-    public static class FileListValidator implements com.beust.jcommander.IParameterValidator {
+    /*// Вложенный класс для валидации списка файлов
+    public static class FileListValidator implements IParameterValidator {
         @Override
         public void validate(String name, String value) throws ParameterException {
             // JCommander вызывает этот метод для каждого файла отдельно,
@@ -227,7 +229,7 @@ public class CliConfig {
                 );
             }
         }
-    }
+    }*/
 
     // Кастомное исключение для ошибок валидации
     private static class ValidationException extends Exception {
