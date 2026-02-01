@@ -1,9 +1,6 @@
 package util.config;
 
-import com.beust.jcommander.JCommander;
-import com.beust.jcommander.Parameter;
-import com.beust.jcommander.ParameterDescription;
-import com.beust.jcommander.ParameterException;
+import com.beust.jcommander.*;
 import util.config.validators.FileNameValidator;
 import util.config.validators.PathValidator;
 import util.config.validators.PrefixValidator;
@@ -12,6 +9,10 @@ import util.exceptions.ExceptionHandler;
 import java.util.ArrayList;
 import java.util.List;
 
+/*@Parameters(
+        commandDescription = "Утилита для обработки текстовых файлов",
+        commandDescriptionKey = "main.description"
+)*/
 public class CliConfig {
     public static final CliConfig instance = new CliConfig();
 
@@ -27,31 +28,48 @@ public class CliConfig {
             description = "Префикс имени выходных файлов",
             order = 2,
             validateWith = PrefixValidator.class)
-    private String prefOut = "";
+    private String prefOut;
 
     @Parameter(names = {"-o"},
             description = "Путь для выходных файлов",
             order = 3,
             validateWith = PathValidator.class)
-    private String pathOut = "";
+    private String pathOut;
 
     @Parameter(names = {"-a"},
             order = 4,
+            help = true,
             description = "Режим добавления в существующие файлы")
     private boolean append;
 
     @Parameter(names = {"-s"},
             order = 5,
+            help = true,
             description = "Краткая статистика")
-    private boolean shortStats;
+    private void setShortStats(boolean value) {
+        if (value){
+            if (statsLevel == StatsLevel.NONE)
+                statsLevel = StatsLevel.SHORT;
+            else throw new ParameterException(
+                    "Нельзя использовать одновременно флаги -s (краткая статистика) и -f (полная статистика).\n" +
+                    "Выберите только один тип статистики или не указывайте ни одного."
+            );
+        }
+    }
 
     @Parameter(names = {"-f"},
             order = 6,
+            help = true,
             description = "Полная статистика")
-    private boolean fullStats;
-
-    public enum StatsLevel {
-        NONE, SHORT, FULL
+    private void setFullStats(boolean value) {
+        if (value){
+            if (statsLevel == StatsLevel.NONE)
+                statsLevel = StatsLevel.FULL;
+            else throw new ParameterException(
+                    "Нельзя использовать одновременно флаги -s (краткая статистика) и -f (полная статистика).\n" +
+                    "Выберите только один тип статистики или не указывайте ни одного."
+            );
+        }
     }
 
     private StatsLevel statsLevel = StatsLevel.NONE;
