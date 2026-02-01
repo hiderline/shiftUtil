@@ -1,11 +1,27 @@
 package util.config.validators;
 
-import com.beust.jcommander.IParameterValidator;
-import com.beust.jcommander.ParameterException;
+import picocli.CommandLine.ITypeConverter;
+import picocli.CommandLine.ParameterException;
+import picocli.CommandLine.TypeConversionException;
 
-public class FileNameValidator implements IParameterValidator {
-    @Override
-    public void validate(String name, String value) throws ParameterException {
-        Validators.validateFileName(name, value);
+public class FileNameValidator implements ITypeConverter<String> {
+
+    public String convert(String value) throws ParameterException {
+
+        // Проверка запрещенных символов (Windows + Unix)
+        if (value.matches(".*[<>:\"/\\\\|?*\\x00-\\x1F].*")) {
+            throw new TypeConversionException(
+                    "Имя файла содержит запрещенные символы: < > : \" / \\ | ? * или управляющие символы"
+            );
+        }
+
+        // Проверка на допустимые имена файлов (не содержат путь)
+        if (value.contains("\\") || value.contains("/")) {
+            throw new TypeConversionException(
+                    "Имя файла не должно содержать путь (символы / или \\)"
+            );
+        }
+
+        return value;
     }
 }

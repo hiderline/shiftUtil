@@ -6,9 +6,7 @@ import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
 import picocli.CommandLine.ParameterException;
 import picocli.CommandLine.Parameters;
-import java.util.concurrent.Callable;
 
-import util.config.converters.StatsFlagConverter;
 import util.config.validators.FileNameValidator;
 import util.config.validators.PathValidator;
 import util.config.validators.PrefixValidator;
@@ -36,21 +34,21 @@ public class CliConfig{
     private boolean help;
 
     @Option(names = {"-p"},
-            description = "Префикс имени выходных файлов",
-            defaultValue = "",
+            description = "Префикс имени выходных файлов, maxSize=50",
             paramLabel = "<префикс>",
             arity = "1",
-            order = 2
-            //validateWith = PrefixValidator.class
+            order = 2,
+            converter = PrefixValidator.class
     )
+
     private String prefOut = "";
 
     @Option(names = {"-o"},
             description = "Путь для выходных файлов",
-            defaultValue = "",
             paramLabel = "<путь>",
-            order = 2
-            //validateWith = PathValidator.class
+            arity = "1",
+            order = 2,
+            converter = PathValidator.class
     )
     private String pathOut = "";
 
@@ -79,6 +77,8 @@ public class CliConfig{
         }
     }
 
+    private StatsLevel statsLevel = StatsLevel.NONE;
+
     @Option(names = {"-f"},
             description = "Полная статистика",
             paramLabel = "статистика",
@@ -98,20 +98,13 @@ public class CliConfig{
         }
     }
 
-    private StatsLevel statsLevel = StatsLevel.NONE;
-
-
-
     @Parameters(
             description = "Входные файлы для обработки",
             paramLabel = "<файлы>",
-            arity = "1..*" // Минимум один файл
-            //validateWith = FileNameValidator.class
+            arity = "1..*", // Минимум один файл
+            converter = FileNameValidator.class
     )
     private List<String> files;
-
-    public CliConfig() {
-    }
 
     public static CliConfig getInstance() {return instance;}
 
@@ -136,7 +129,6 @@ public class CliConfig{
     }
 
     public void setConfig(String[] args) throws Exception {
-        CommandLine cmd = new CommandLine(instance);
 
         try {
             cmd.parseArgs(args);
@@ -146,70 +138,11 @@ public class CliConfig{
                 System.exit(0);
             }
 
-
-            //validateParameters();
-
-
-
         } catch (ParameterException e) {
             handleParameterError(e);
             System.exit(1);
-        } /*catch (ValidationException e) {
-            ExceptionHandler.printError(e.getMessage());
-            ExceptionHandler.printInfo("Используйте --help для получения справки");
-            System.exit(1);
         }
-*/
     }
-
-    private void validateParameters() {
-
-    }
-
-    /*private void validateParameters() throws ValidationException {
-        // Проверка взаимоисключающих флагов -s и -f
-        if (shortStats && fullStats) {
-            throw new ValidationException(
-                    "Нельзя использовать одновременно флаги -s (краткая статистика) и -f (полная статистика).\n" +
-                            "Выберите только один тип статистики или не указывайте ни одного."
-            );
-        }
-
-        // Проверка наличия значений после -p и -o (если они указаны)
-        if (prefOut != null && prefOut.trim().isEmpty()) {
-            throw new ValidationException(
-                    "Флаг -p требует указания префикса.\n" +
-                            "Пример: -p myprefix_"
-            );
-        }
-
-        if (pathOut != null && pathOut.trim().isEmpty()) {
-            throw new ValidationException(
-                    "Флаг -o требует указания пути.\n" +
-                            "Пример: -o /path/to/output"
-            );
-        }
-
-        // Проверка наличия входных файлов
-        if (files == null || files.isEmpty()) {
-            throw new ValidationException(
-                    "Не указаны входные файлы для обработки.\n" +
-                            "Укажите хотя бы один файл в конце команды.\n" +
-                            "Пример: java -jar util.jar -f -o /путь -p префикс_ file1.txt file2.txt"
-            );
-        }
-
-        // Проверка, что файлы действительно указаны в конце
-        // (JCommander уже гарантирует это, но можно добавить дополнительную проверку)
-        for (String file : files) {
-            if (file.startsWith("-")) {
-                throw new ValidationException(
-                        "Входные файлы должны указываться в конце команды, после всех флагов.\n" +
-                                "Обнаружен флаг среди файлов: " + file
-                );
-            }
-        }
-    }*/
 
     private void handleParameterError(ParameterException e) {
         String errorMessage;
@@ -236,7 +169,7 @@ public class CliConfig{
             errorMessage = e.getMessage();
         }
 
-        ExceptionHandler.printError("Ошибка в параметрах командной строки: " + errorMessage);
+        ExceptionHandler.printError("Ошибка в параметрах командной строки:\n" + errorMessage);
         ExceptionHandler.printInfo("\nИспользуйте --help для получения полной справки:");
     }
 
@@ -264,30 +197,5 @@ public class CliConfig{
             // Если не удалось извлечь, возвращаем общее сообщение
         }
         return "неизвестный флаг";
-    }
-
-    /*// Вложенный класс для валидации списка файлов
-    public static class FileListValidator implements IParameterValidator {
-        @Override
-        public void validate(String name, String value) throws ParameterException {
-            // JCommander вызывает этот метод для каждого файла отдельно,
-            // поэтому здесь можно проверить отдельные файлы
-            if (value == null || value.trim().isEmpty()) {
-                throw new ParameterException("Имя файла не может быть пустым");
-            }
-            if (value.startsWith("-")) {
-                throw new ParameterException(
-                        "Входные файлы должны указываться после всех флагов. " +
-                                "Обнаружен флаг вместо имени файла: " + value
-                );
-            }
-        }
-    }*/
-
-    // Кастомное исключение для ошибок валидации
-    private static class ValidationException extends Exception {
-        public ValidationException(String message) {
-            super(message);
-        }
     }
 }
