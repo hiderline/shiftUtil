@@ -7,7 +7,7 @@ public class ApplicationFacade {
     private final CliConfig appConfig = CliConfig.getInstance();
 
     public void start(String[] args) throws Exception {
-        appConfig.call();
+        appConfig.setConfig(args); // или другой метод для вызова процедуры парсинга.
 
         System.out.println("-p: " + appConfig.getPrefOut());
         System.out.println("-o: " + appConfig.getPathOut());

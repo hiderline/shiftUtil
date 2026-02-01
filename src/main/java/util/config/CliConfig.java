@@ -20,44 +20,92 @@ import java.util.List;
 @Command(
         name = "util",
         description = "Утилита для обработки файлов",
-        mixinStandardHelpOptions = true,
-        version = "1.0.0"
+        version = "1.0.0",
+        separator = " ",
+        sortOptions = false
 )
-public class CliConfig implements Callable<Integer>{
+public class CliConfig{
     public static final CliConfig instance = new CliConfig();
+    public static final CommandLine cmd = new CommandLine(instance);
 
     @Option(names = {"--help", "-h"},
             description = "Показать справку по использованию",
-            usageHelp = true
+            usageHelp = true,
+            order = 1
     )
     private boolean help;
 
     @Option(names = {"-p"},
-            description = "Префикс имени выходных файлов"
+            description = "Префикс имени выходных файлов",
+            defaultValue = "",
+            paramLabel = "<префикс>",
+            arity = "1",
+            order = 2
             //validateWith = PrefixValidator.class
     )
     private String prefOut = "";
 
     @Option(names = {"-o"},
-            description = "Путь для выходных файлов"
+            description = "Путь для выходных файлов",
+            defaultValue = "",
+            paramLabel = "<путь>",
+            order = 2
             //validateWith = PathValidator.class
     )
     private String pathOut = "";
 
-    @Option(names = {"-a"}, description = "Режим добавления в существующие файлы")
+    @Option(names = {"-a"},
+            description = "Режим добавления в существующие файлы",
+            order = 3
+    )
     private boolean append;
 
-    @Option(names = {"-s", "-f"},
-            description = "Статистика: -s для краткой, -f для полной",
-            converter = StatsFlagConverter.class
+    @Option(names = {"-s"},
+            description = "Краткая статистика",
+            paramLabel = "статистика",
+            arity = "0",
+            order = 4
     )
+    private void setShortStats(boolean value) throws ParameterException {
+        if (value) {
+            if (statsLevel == StatsLevel.NONE)
+                statsLevel = StatsLevel.SHORT;
+            else {
+                throw new ParameterException(cmd,
+                            "Нельзя использовать одновременно флаги -s (краткая статистика) и -f (полная статистика)\n" +
+                            "Выберите только один тип статистики или не указывайте ни одного."
+                );
+            }
+        }
+    }
+
+    @Option(names = {"-f"},
+            description = "Полная статистика",
+            paramLabel = "статистика",
+            arity = "0",
+            order = 5
+    )
+    private void setFullStats(boolean value) {
+        if (value) {
+            if (statsLevel == StatsLevel.NONE)
+                statsLevel = StatsLevel.FULL;
+            else {
+                throw new ParameterException(cmd,
+                        "Нельзя использовать одновременно флаги -s (краткая статистика) и -f (полная статистика)\n" +
+                        "Выберите только один тип статистики или не указывайте ни одного."
+                );
+            }
+        }
+    }
+
     private StatsLevel statsLevel = StatsLevel.NONE;
 
-    @Option(names = {},
+
+
+    @Parameters(
             description = "Входные файлы для обработки",
             paramLabel = "<файлы>",
-            arity = "1..*", // Минимум один файл
-            required = true
+            arity = "1..*" // Минимум один файл
             //validateWith = FileNameValidator.class
     )
     private List<String> files;
@@ -66,10 +114,6 @@ public class CliConfig implements Callable<Integer>{
     }
 
     public static CliConfig getInstance() {return instance;}
-
-    public boolean isHelp() {
-        return help;
-    }
 
     public String getPathOut() {
         return pathOut;
@@ -91,9 +135,19 @@ public class CliConfig implements Callable<Integer>{
         return files == null ? new ArrayList<>() : new ArrayList<>(this.files);
     }
 
-    public Integer call() throws Exception {
+    public void setConfig(String[] args) throws Exception {
+        CommandLine cmd = new CommandLine(instance);
+
         try {
-            validateParameters();
+            cmd.parseArgs(args);
+
+            if (cmd.isUsageHelpRequested()) {
+                cmd.usage(System.out);
+                System.exit(0);
+            }
+
+
+            //validateParameters();
 
 
 
@@ -106,7 +160,6 @@ public class CliConfig implements Callable<Integer>{
             System.exit(1);
         }
 */
-        return 0; //Успешное завершение
     }
 
     private void validateParameters() {
