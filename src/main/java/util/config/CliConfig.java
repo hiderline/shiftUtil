@@ -19,26 +19,35 @@ public class CliConfig {
 
     @Parameter(names = {"--help", "-h"},
             description = "Показать справку по использованию",
+            order = 1,
             help = true)
     private boolean help;
 
-    @Parameter(names = {"-o"},
-            description = "Путь для выходных файлов",
-            validateWith = PathValidator.class)
-    private String pathOut = "";
-
     @Parameter(names = {"-p"},
             description = "Префикс имени выходных файлов",
+            order = 2,
             validateWith = PrefixValidator.class)
     private String prefOut = "";
 
-    @Parameter(names = {"-a"}, description = "Режим добавления в существующие файлы")
+    @Parameter(names = {"-o"},
+            description = "Путь для выходных файлов",
+            order = 3,
+            validateWith = PathValidator.class)
+    private String pathOut = "";
+
+    @Parameter(names = {"-a"},
+            order = 4,
+            description = "Режим добавления в существующие файлы")
     private boolean append;
 
-    @Parameter(names = {"-s"}, description = "Краткая статистика")
+    @Parameter(names = {"-s"},
+            order = 5,
+            description = "Краткая статистика")
     private boolean shortStats;
 
-    @Parameter(names = {"-f"}, description = "Полная статистика")
+    @Parameter(names = {"-f"},
+            order = 6,
+            description = "Полная статистика")
     private boolean fullStats;
 
     public enum StatsLevel {
@@ -73,13 +82,6 @@ public class CliConfig {
         return append;
     }
 
-    /*public boolean isShortStats() {
-        return shortStats;
-    }
-
-    public boolean isFullStats() {
-        return fullStats;
-    }*/
 
     public boolean isShortStats() {
         return statsLevel == StatsLevel.SHORT;
