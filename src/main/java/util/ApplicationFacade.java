@@ -1,7 +1,6 @@
 package util;
 
 import util.config.CliConfig;
-import util.config.Configuration;
 
 public class ApplicationFacade {
     private final CliConfig appConfig = CliConfig.getInstance();
