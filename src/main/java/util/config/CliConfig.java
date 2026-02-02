@@ -7,6 +7,7 @@ import picocli.CommandLine.Option;
 import picocli.CommandLine.ParameterException;
 import picocli.CommandLine.Parameters;
 
+import util.config.messages.ErrorMessages;
 import util.config.validators.FileNameValidator;
 import util.config.validators.PathValidator;
 import util.config.validators.PrefixValidator;
@@ -14,6 +15,8 @@ import util.exceptions.ExceptionHandler;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Command(
         name = "util",
@@ -23,6 +26,12 @@ import java.util.List;
         sortOptions = false
 )
 public class CliConfig{
+    // Константы для паттернов извлечения
+    private static final Pattern PARAM_PATTERN =
+            Pattern.compile("parameter '([^']+)'");
+    private static final Pattern OPTION_PATTERN =
+            Pattern.compile("Unknown option: ([^;]+)");
+
     public static final CliConfig instance = new CliConfig();
     public static final CommandLine cmd = new CommandLine(instance);
 
@@ -70,8 +79,7 @@ public class CliConfig{
                 statsLevel = StatsLevel.SHORT;
             else {
                 throw new ParameterException(cmd,
-                            "Нельзя использовать одновременно флаги -s (краткая статистика) и -f (полная статистика)\n" +
-                            "Выберите только один тип статистики или не указывайте ни одного."
+                        ErrorMessages.Conflicts.STATS_CONFLICT
                 );
             }
         }
@@ -91,8 +99,7 @@ public class CliConfig{
                 statsLevel = StatsLevel.FULL;
             else {
                 throw new ParameterException(cmd,
-                        "Нельзя использовать одновременно флаги -s (краткая статистика) и -f (полная статистика)\n" +
-                        "Выберите только один тип статистики или не указывайте ни одного."
+                        ErrorMessages.Conflicts.STATS_CONFLICT
                 );
             }
         }
@@ -145,57 +152,26 @@ public class CliConfig{
     }
 
     private void handleParameterError(ParameterException e) {
-        String errorMessage;
+        String errorMessage = determineErrorMessage(e.getMessage());
 
-        // Анализируем тип ошибки для более понятного сообщения
-        if (e.getMessage().contains("Expected a value after parameter")) {
-            String param = extractParamFromMessage(e.getMessage());
-            errorMessage = String.format(
-                    "После флага %s не указано значение.\n" +
-                            "Пример: %s значение",
-                    param, param
-            );
-        } else if (e.getMessage().contains("Unknown option")) {
-            String option = extractOptionFromMessage(e.getMessage());
-            errorMessage = String.format(
-                    "Неизвестный флаг: %s\n" +
-                            "Проверьте правильность написания флага.",
-                    option
-            );
-        } else if (e.getMessage().contains("Main parameters are required")) {
-            errorMessage = "Не указаны входные файлы для обработки.\n" +
-                    "Укажите файлы в конце команды.";
+        ExceptionHandler.printError(ErrorMessages.CLI_PREFIX + "\n" + errorMessage);
+        ExceptionHandler.printInfo(ErrorMessages.USE_HELP);
+    }
+    private String determineErrorMessage(String originalMessage) {
+        if (originalMessage.contains("Expected a value after parameter")) {
+            return ErrorMessages.Parsing.missingValue(extractWithPattern(originalMessage, PARAM_PATTERN, "параметра"));
+        } else if (originalMessage.contains("Unknown option")) {
+            return ErrorMessages.Parsing.unknownOption(extractWithPattern(originalMessage, OPTION_PATTERN, "неизвестный флаг"));
+        } else if (originalMessage.contains("Main parameters are required")) {
+            return ErrorMessages.Parsing.NO_INPUT_FILES;
         } else {
-            errorMessage = e.getMessage();
+            // Для TypeConversionException из валидаторов
+            return originalMessage;
         }
-
-        ExceptionHandler.printError("Ошибка в параметрах командной строки:\n" + errorMessage);
-        ExceptionHandler.printInfo("\nИспользуйте --help для получения полной справки:");
     }
 
-    private String extractParamFromMessage(String message) {
-        // Извлекаем название параметра из сообщения об ошибке
-        try {
-            String[] parts = message.split("'");
-            if (parts.length > 1) {
-                return parts[1];
-            }
-        } catch (Exception e) {
-            // Если не удалось извлечь, возвращаем общее сообщение
-        }
-        return "параметра";
-    }
-
-    private String extractOptionFromMessage(String message) {
-        // Извлекаем название опции из сообщения об ошибке
-        try {
-            String[] parts = message.split(":");
-            if (parts.length > 1) {
-                return parts[1].trim();
-            }
-        } catch (Exception e) {
-            // Если не удалось извлечь, возвращаем общее сообщение
-        }
-        return "неизвестный флаг";
+    private String extractWithPattern(String message, Pattern pattern, String defaultValue) {
+        Matcher matcher = pattern.matcher(message);
+        return matcher.find() ? matcher.group(1) : defaultValue;
     }
 }

@@ -6,8 +6,8 @@ public class Main {
         args = new String[]{"-p","pref", "-o", "/some/path", "-a", "-s", "in1.txt", "in2.txt"};
 //        args = new String[]{"-p", "pref", "-o", "/some/path", "in1.txt"};
         args = new String[]{"-p", "pref", "-o", "*/some/path", "-s", "in1.txt"};
-        args = new String[]{"-o", "/some/path", "in1*.txt"};
-        args = new String[]{"--help"};
+//        args = new String[]{"-o", "/some/path", "in1*.txt"};
+//        args = new String[]{"--help"};
 //        args = new String[]{"-p", "-o", "-a", "-f", "in1.txt", "in2.txt", "in3.txt"};
         new ApplicationFacade().start(args);
     }
