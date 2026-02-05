@@ -28,7 +28,6 @@ public class MessageBroker {
         // Кладем сообщение в очередь соответствующей темы
         queue.put(message);
         System.out.println("Broker: Опубликовано сообщение " + message);
-
     }
 
     // Получение сообщений из очереди (pull-модель)
@@ -39,7 +38,7 @@ public class MessageBroker {
     }
 
     // Получение всех сообщений из очереди
-    public List<Message> drain(String topic) {
+    public List<Message> drain(Topic topic) {
         BlockingQueue<Message> queue = queues.get(topic);
         List<Message> messages = new ArrayList<>();
         if (queue != null) {

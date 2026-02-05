@@ -9,13 +9,12 @@ import java.util.List;
 public class FileReader {
     private static final FileReader instance = new FileReader();
 
-
     public FileReader() {
     }
     public List<String> readFileLines(String fileName) throws IOException {
         //System.out.println(Paths.get("").toAbsolutePath());
         Path currentPath = Paths.get("")
-                .toAbsolutePath().resolve("../../../test/resources");
+                .toAbsolutePath().resolve("test/resources");
         //System.out.println(currentPath);
         Path path = currentPath.resolve(fileName);
         //System.out.println(path);

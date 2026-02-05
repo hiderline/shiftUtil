@@ -4,6 +4,7 @@ import util.config.CliConfig;
 import util.processing.broker.MessageBroker;
 import util.processing.consumer.Consumer;
 import util.processing.model.Message;
+import util.processing.model.Topic;
 import util.processing.producer.FileProducer;
 
 import java.util.List;
@@ -22,13 +23,14 @@ public class Processing {
         broker = new MessageBroker();
         producer = new FileProducer(broker, config.getFiles());
         producer.run();
-        for (Message msg: broker.drain("integers")){
+
+        for (Message msg: broker.drain(Topic.INTEGER)){
             System.out.println(msg);
         }
-        for (Message msg: broker.drain("floats")){
+        for (Message msg: broker.drain(Topic.FLOAT)){
             System.out.println(msg);
         }
-        for (Message msg: broker.drain("strings")){
+        for (Message msg: broker.drain(Topic.STRING)){
             System.out.println(msg);
         }
     }
