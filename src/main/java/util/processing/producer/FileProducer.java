@@ -1,6 +1,7 @@
 package util.processing.producer;
 
 import util.processing.broker.MessageBroker;
+import util.processing.model.Topic;
 import util.services.FileReader;
 
 import java.io.IOException;
@@ -24,7 +25,6 @@ public class FileProducer implements Runnable{
             for (String file : files) {
                 lines.addAll(reader.readFileLines(file));
                 System.out.println("=".repeat(80));
-
             }
             for (String s: lines) {
                 broker.publish(determineTopic(s), s);
@@ -36,16 +36,16 @@ public class FileProducer implements Runnable{
         }
     }
 
-    private String determineTopic(String data) {
+    private Topic determineTopic(String data) {
         try {
             Integer.parseInt(data);
-            return "integers";
+            return Topic.INTEGER;
         } catch (NumberFormatException e1) {
             try {
                 Float.parseFloat(data);
-                return "floats";
+                return Topic.FLOAT;
             } catch (NumberFormatException e2) {
-                return "strings";
+                return Topic.STRING;
             }
         }
     }

@@ -1,7 +1,5 @@
 package util.services;
 
-import util.processing.producer.FileProducer;
-
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -15,12 +13,13 @@ public class FileReader {
     public FileReader() {
     }
     public List<String> readFileLines(String fileName) throws IOException {
-        System.out.println(Paths.get("").toAbsolutePath());
-        Path currentPath = Paths.get("").toAbsolutePath().resolve("../../../test/resources");
-        System.out.println(currentPath);
+        //System.out.println(Paths.get("").toAbsolutePath());
+        Path currentPath = Paths.get("")
+                .toAbsolutePath().resolve("../../../test/resources");
+        //System.out.println(currentPath);
         Path path = currentPath.resolve(fileName);
-        System.out.println(path);
-        System.out.println(Files.exists(path));
+        //System.out.println(path);
+        //System.out.println(Files.exists(path));
         return Files.readAllLines(path);
     }
 
