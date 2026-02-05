@@ -2,6 +2,7 @@ package util.processing.producer;
 
 import util.processing.broker.MessageBroker;
 import util.processing.model.Topic;
+import util.processing.model.TopicSelector;
 import util.services.FileReader;
 
 import java.io.IOException;
@@ -27,26 +28,12 @@ public class FileProducer implements Runnable{
                 System.out.println("=".repeat(80));
             }
             for (String s: lines) {
-                broker.publish(determineTopic(s), s);
+                broker.publish(TopicSelector.getInstance().determineTopic(s), s);
             }
         } catch (IOException e) {
             throw new RuntimeException(e);
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
-        }
-    }
-
-    private Topic determineTopic(String data) {
-        try {
-            Integer.parseInt(data);
-            return Topic.INTEGER;
-        } catch (NumberFormatException e1) {
-            try {
-                Float.parseFloat(data);
-                return Topic.FLOAT;
-            } catch (NumberFormatException e2) {
-                return Topic.STRING;
-            }
         }
     }
 }
