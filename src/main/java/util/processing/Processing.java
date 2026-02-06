@@ -7,6 +7,8 @@ import util.processing.model.Message;
 import util.processing.model.Topic;
 import util.processing.producer.FileProducer;
 
+import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.List;
 
 public class Processing {
@@ -21,10 +23,21 @@ public class Processing {
 
     public void process() {
         broker = new MessageBroker();
-        producer = new FileProducer(broker, config.getFiles());
-        producer.run();
 
-        for (Message msg: broker.drain(Topic.INTEGER)){
+        consumers = new ArrayList<>();
+        consumers.add(new Consumer(broker, Topic.INTEGER, Path.of(config.getPathOut())));
+        for(Consumer consumer: consumers) {
+            new Thread(consumer).start();
+        }
+
+        producer = new FileProducer(broker, config.getFiles());
+        new Thread(producer).start();
+        //producer.run();
+
+
+
+
+        /*for (Message msg: broker.drain(Topic.INTEGER)){
             System.out.println(msg);
         }
         for (Message msg: broker.drain(Topic.FLOAT)){
@@ -32,6 +45,6 @@ public class Processing {
         }
         for (Message msg: broker.drain(Topic.STRING)){
             System.out.println(msg);
-        }
+        }*/
     }
 }

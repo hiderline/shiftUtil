@@ -9,6 +9,7 @@ import java.util.concurrent.*;
 public class MessageBroker {
     // ConcurrentHashMap для хранения очередей по темам
     private final ConcurrentHashMap<Topic, BlockingQueue<Message>> queues;
+    //private final BlockingQueue<Message> queues;
     private volatile boolean running = true;
 
     public MessageBroker() {
@@ -35,6 +36,12 @@ public class MessageBroker {
             throws InterruptedException {
         BlockingQueue<Message> queue = getOrCreateQueue(topic);
         return queue.poll(timeout, unit);
+    }
+
+    public void finish() {
+        /*for(Topic topic: Topic.values()) {
+            BlockingQueue<Message> eof
+        }*/
     }
 
     // Получение всех сообщений из очереди
