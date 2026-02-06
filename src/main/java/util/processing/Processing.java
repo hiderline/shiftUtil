@@ -5,6 +5,7 @@ import util.processing.broker.MessageBroker;
 import util.processing.consumer.Consumer;
 import util.processing.model.Message;
 import util.processing.model.Topic;
+import util.processing.model.TopicSelector;
 import util.processing.producer.FileProducer;
 
 import java.nio.file.Path;
@@ -16,6 +17,7 @@ public class Processing {
     private MessageBroker broker;
     private List<Consumer> consumers;
     private FileProducer producer;
+    private final TopicSelector topicSelector = TopicSelector.getInstance();
 
     public Processing(CliConfig config) {
         this.config = config;
@@ -30,7 +32,7 @@ public class Processing {
             new Thread(consumer).start();
         }
 
-        producer = new FileProducer(broker, config.getFiles());
+        producer = new FileProducer(broker, topicSelector, config.getFiles());
         new Thread(producer).start();
         //producer.run();
 

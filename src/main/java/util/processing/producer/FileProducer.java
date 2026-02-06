@@ -13,11 +13,15 @@ import java.util.List;
 public class FileProducer implements Runnable{
     private final MessageBroker broker;
     private final List<String> files;
+    private final TopicSelector topicSelector;
     private final FileReader reader = FileReader.getInstance();
 
-    public FileProducer(MessageBroker broker, List<String> files) {
+    public FileProducer(MessageBroker broker,
+                        TopicSelector topicSelector,
+                        List<String> files) {
         this.broker = broker;
         this.files = files;
+        this.topicSelector = topicSelector;
     }
 
     @Override
@@ -29,10 +33,11 @@ public class FileProducer implements Runnable{
             }
             for (String line: lines) {
                 if (!line.trim().isEmpty()) {
-                    Topic topic = TopicSelector.getInstance().determineTopic(line);
+                    Topic topic = topicSelector.determineTopic(line);
                     broker.publish(new Message(topic, line));
                 }
             }
+            broker.finish();
         } catch (IOException e) {
             throw new RuntimeException(e);
         } catch (InterruptedException e) {

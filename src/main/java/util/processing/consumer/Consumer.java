@@ -26,9 +26,10 @@ public class Consumer implements Runnable{
                 String message = broker.consume(topic, 50, TimeUnit.MILLISECONDS);
 
                 if (message != null) {
-
                     System.out.println(topic + ": сообщение - " + message);
                 }
+                //if (message.equals("EOF"))
+
             }
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
