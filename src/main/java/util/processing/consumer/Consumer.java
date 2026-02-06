@@ -23,11 +23,11 @@ public class Consumer implements Runnable{
         try {
             while (!Thread.currentThread().isInterrupted()) {
                 // Pull-модель: забираем сообщение из очереди
-                Message message = broker.consume(topic, 50, TimeUnit.MILLISECONDS);
+                String message = broker.consume(topic, 50, TimeUnit.MILLISECONDS);
 
                 if (message != null) {
 
-                    System.out.println(topic + ": сообщение - " + message.getPayload());
+                    System.out.println(topic + ": сообщение - " + message);
                 }
             }
         } catch (InterruptedException e) {

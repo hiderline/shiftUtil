@@ -1,6 +1,8 @@
 package util.processing.producer;
 
 import util.processing.broker.MessageBroker;
+import util.processing.model.Message;
+import util.processing.model.Topic;
 import util.processing.model.TopicSelector;
 import util.services.FileReader;
 
@@ -25,9 +27,11 @@ public class FileProducer implements Runnable{
             for (String file : files) {
                 lines.addAll(reader.readFileLines(file));
             }
-            for (String s: lines) {
-                if (!s.trim().isEmpty())
-                    broker.publish(TopicSelector.getInstance().determineTopic(s), s);
+            for (String line: lines) {
+                if (!line.trim().isEmpty()) {
+                    Topic topic = TopicSelector.getInstance().determineTopic(line);
+                    broker.publish(new Message(topic, line));
+                }
             }
         } catch (IOException e) {
             throw new RuntimeException(e);
