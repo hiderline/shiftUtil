@@ -2,15 +2,12 @@ package util.processing.broker;
 import util.processing.model.Message;
 import util.processing.model.Topic;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.concurrent.*;
 
 public class MessageBroker {
     // ConcurrentHashMap для хранения очередей по темам
     private final ConcurrentHashMap<Topic, BlockingQueue<String>> queues;
     //private final BlockingQueue<Message> queues;
-    private volatile boolean running = true;
 
     public MessageBroker() {
         this.queues = new ConcurrentHashMap<>();
@@ -36,15 +33,4 @@ public class MessageBroker {
         BlockingQueue<String> queue = getOrCreateQueue(topic);
         return queue.poll(timeout, unit);
     }
-
-    // Получение всех сообщений из очереди
-    public List<String> drain(Topic topic) {
-        BlockingQueue<String> queue = queues.get(topic);
-        List<String> messages = new ArrayList<>();
-        if (queue != null) {
-            queue.drainTo(messages);
-        }
-        return messages;
-    }
-
 }

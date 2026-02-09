@@ -1,38 +1,72 @@
 package util.processing.consumer;
 
 import util.processing.broker.MessageBroker;
-import util.processing.model.Message;
 import util.processing.model.Topic;
+import util.services.FileService;
 
+import java.io.BufferedWriter;
+import java.io.IOException;
 import java.nio.file.Path;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
 public class Consumer implements Runnable{
     private final MessageBroker broker;
     private final Topic topic;
     private final Path outputFile;
+    private final boolean appendMode;
+    private final CountDownLatch completionLatch;
+    private final FileService fileService = FileService.getInstance();
 
-    public Consumer(MessageBroker broker, Topic topic, Path outputFile) {
+    public Consumer(MessageBroker broker, Topic topic, Path outputFile, boolean appendMode, CountDownLatch completionLatch) {
         this.broker = broker;
         this.topic = topic;
         this.outputFile = outputFile;
+        this.appendMode = appendMode;
+        this.completionLatch = completionLatch;
     }
 
     @Override
     public void run() {
+        BufferedWriter writer = null;
+        boolean fileCreated = false;
+
         try {
-            while (!Thread.currentThread().isInterrupted()) {
-                // Pull-модель: забираем сообщение из очереди
-                String message = broker.consume(topic, 50, TimeUnit.MILLISECONDS);
+            while (true) {
+                // Забираем сообщение из очереди
+                String message = broker.consume(topic, 100, TimeUnit.MILLISECONDS);
+
+                if (message != null && message.equals("EOF") || Thread.currentThread().isInterrupted())
+                    break;
 
                 if (message != null) {
+                    if (!fileCreated) {
+                        writer = fileService.createWriter(outputFile, appendMode);
+                        fileCreated = true;
+                    }
                     System.out.println(topic + ": сообщение - " + message);
+                    writer.write(message);
+                    writer.newLine();
                 }
-                //if (message.equals("EOF"))
-
             }
-        } catch (InterruptedException e) {
+        } catch (InterruptedException | IOException e) {
             throw new RuntimeException(e);
+        } finally {
+            if (writer != null) {
+                try {
+                    writer.flush(); // Сначала сбрасываем буфер
+                } catch (IOException e) {
+                    System.err.println(topic + ": Ошибка при flush - " + e.getMessage());
+                }
+
+                try {
+                    writer.close();
+                } catch (IOException e) {
+                    System.err.println(topic + ": Ошибка при закрытии файла - " + e.getMessage());
+                }
+            }
+            if (completionLatch != null)
+                completionLatch.countDown();
         }
     }
 }

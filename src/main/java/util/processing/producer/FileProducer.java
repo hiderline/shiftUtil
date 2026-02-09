@@ -9,19 +9,22 @@ import util.services.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CountDownLatch;
 
 public class FileProducer implements Runnable{
     private final MessageBroker broker;
     private final List<String> files;
     private final TopicSelector topicSelector;
+    private final CountDownLatch completionLatch;
     private final FileReader reader = FileReader.getInstance();
 
     public FileProducer(MessageBroker broker,
                         TopicSelector topicSelector,
-                        List<String> files) {
+                        List<String> files, CountDownLatch completionLatch) {
         this.broker = broker;
         this.files = files;
         this.topicSelector = topicSelector;
+        this.completionLatch = completionLatch;
     }
 
     @Override
@@ -42,6 +45,9 @@ public class FileProducer implements Runnable{
             }
         } catch (IOException | InterruptedException e) {
             throw new RuntimeException(e);
+        } finally {
+            if (completionLatch != null)
+                completionLatch.countDown();
         }
     }
 }

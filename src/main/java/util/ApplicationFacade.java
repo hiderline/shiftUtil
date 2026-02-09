@@ -8,6 +8,7 @@ public class ApplicationFacade {
     private Processing processing;
 
     public void start(String[] args) throws Exception {
+
         appConfig.setConfig(args);
         processing = new Processing(appConfig);
         processing.process();
