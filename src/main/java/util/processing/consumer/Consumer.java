@@ -1,5 +1,6 @@
 package util.processing.consumer;
 
+import util.exceptions.ExceptionHandler;
 import util.processing.broker.MessageBroker;
 import util.processing.model.Topic;
 import util.services.FileService;
@@ -50,19 +51,19 @@ public class Consumer implements Runnable{
                 }
             }
         } catch (InterruptedException | IOException e) {
-            throw new RuntimeException(e);
+            ExceptionHandler.handleException(new RuntimeException(e));
         } finally {
             if (writer != null) {
                 try {
-                    writer.flush(); // Сначала сбрасываем буфер
+                    writer.flush(); // сбрасываем буфер
                 } catch (IOException e) {
-                    System.err.println(topic + ": Ошибка при flush - " + e.getMessage());
+                    ExceptionHandler.printInfo(topic + ": Ошибка при flush - " + e.getMessage());
                 }
 
                 try {
-                    writer.close();
+                    writer.close(); // закрываем
                 } catch (IOException e) {
-                    System.err.println(topic + ": Ошибка при закрытии файла - " + e.getMessage());
+                    ExceptionHandler.printError(topic + ": Ошибка при закрытии файла - " + e.getMessage());
                 }
             }
             if (completionLatch != null)

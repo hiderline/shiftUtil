@@ -1,6 +1,7 @@
 package util.processing;
 
 import util.config.CliConfig;
+import util.exceptions.ExceptionHandler;
 import util.processing.broker.MessageBroker;
 import util.processing.consumer.Consumer;
 import util.processing.model.Topic;
@@ -55,7 +56,7 @@ public class Processing {
             producerLatch.await();
             consumersLatch.await();
         } catch (InterruptedException e) {
-            System.out.println("Обработка прервана");
+            ExceptionHandler.printWarning("Обработка прервана");
             Thread.currentThread().interrupt();
             executorService.shutdownNow();
         }

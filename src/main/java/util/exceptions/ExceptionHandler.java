@@ -14,6 +14,10 @@ public class ExceptionHandler {
     private static boolean coloredOutput = true;
     private static PrintStream errorStream = System.err;
 
+    public static void handleException(Exception e) {
+        handleException(e, null, null);
+    }
+
     /**
      * Обрабатывает исключение без падения программы
      */

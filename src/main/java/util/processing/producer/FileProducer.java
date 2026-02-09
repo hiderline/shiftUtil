@@ -1,5 +1,6 @@
 package util.processing.producer;
 
+import util.exceptions.ExceptionHandler;
 import util.processing.broker.MessageBroker;
 import util.processing.model.Message;
 import util.processing.model.Topic;
@@ -44,7 +45,7 @@ public class FileProducer implements Runnable{
                 broker.publish(new Message(topic, "EOF"));
             }
         } catch (IOException | InterruptedException e) {
-            throw new RuntimeException(e);
+            ExceptionHandler.handleException(new RuntimeException(e));
         } finally {
             if (completionLatch != null)
                 completionLatch.countDown();
