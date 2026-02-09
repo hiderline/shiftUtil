@@ -1,6 +1,7 @@
 package util.statistics;
 
 import util.config.StatsLevel;
+import util.processing.model.Topic;
 
 import java.util.concurrent.atomic.AtomicInteger;
 

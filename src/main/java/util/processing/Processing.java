@@ -48,6 +48,11 @@ public class Processing {
 
         // Ожидаем завершения работы
         waitForCompletion();
+
+        for(Consumer consumer : consumers) {
+            System.out.println(consumer.getStatsStrategy().getFormattedStats(config.getStatsLevel()));
+        }
+
         shutdownExecutor();
     }
 

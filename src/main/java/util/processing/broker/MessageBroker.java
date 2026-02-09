@@ -24,7 +24,6 @@ public class MessageBroker {
 
         // Кладем сообщение в очередь соответствующей темы
         queue.put(message.getPayload());
-        System.out.println("Broker: Опубликовано сообщение " + message);
     }
 
     // Получение сообщений из очереди (pull-модель)
