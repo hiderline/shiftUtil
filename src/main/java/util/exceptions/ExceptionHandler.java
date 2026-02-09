@@ -12,7 +12,11 @@ public class ExceptionHandler {
     private static final String RESET = "\u001B[0m";
 
     private static boolean coloredOutput = true;
-    private static PrintStream errorStream = System.err;
+    private static PrintStream errorStream = System.out;
+
+    public static void handleException(Exception e) {
+        handleException(e, null, null);
+    }
 
     /**
      * Обрабатывает исключение без падения программы

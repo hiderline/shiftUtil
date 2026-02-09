@@ -165,7 +165,6 @@ public class CliConfig{
         } else if (originalMessage.contains("Main parameters are required")) {
             return ErrorMessages.Parsing.NO_INPUT_FILES;
         } else {
-            // Для TypeConversionException из валидаторов
             return originalMessage;
         }
     }
