@@ -9,6 +9,7 @@ import util.processing.model.TopicSelector;
 import util.processing.producer.FileProducer;
 
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,10 +28,15 @@ public class Processing {
         broker = new MessageBroker();
 
         consumers = new ArrayList<>();
-        consumers.add(new Consumer(broker, Topic.INTEGER, Path.of(config.getPathOut())));
+        /*consumers.add(new Consumer(broker,
+                Topic.INTEGER,
+                Paths.get("")
+                        .toAbsolutePath()
+                        .resolve(config.getPathOut())
+                        .resolve(config.getPrefOut() + Topic.INTEGER.getDescription() + ".txt")));
         for(Consumer consumer: consumers) {
             new Thread(consumer).start();
-        }
+        }*/
 
         producer = new FileProducer(broker, topicSelector, config.getFiles());
         new Thread(producer).start();

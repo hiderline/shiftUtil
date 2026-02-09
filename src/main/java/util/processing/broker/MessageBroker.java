@@ -37,12 +37,6 @@ public class MessageBroker {
         return queue.poll(timeout, unit);
     }
 
-    public void finish() throws InterruptedException {
-        for(Topic topic: Topic.values()) {
-            this.publish(new Message(topic, "EOF"));
-        }
-    }
-
     // Получение всех сообщений из очереди
     public List<String> drain(Topic topic) {
         BlockingQueue<String> queue = queues.get(topic);

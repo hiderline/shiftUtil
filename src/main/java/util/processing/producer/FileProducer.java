@@ -37,10 +37,10 @@ public class FileProducer implements Runnable{
                     broker.publish(new Message(topic, line));
                 }
             }
-            broker.finish();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        } catch (InterruptedException e) {
+            for(Topic topic: Topic.values()) {
+                broker.publish(new Message(topic, "EOF"));
+            }
+        } catch (IOException | InterruptedException e) {
             throw new RuntimeException(e);
         }
     }
