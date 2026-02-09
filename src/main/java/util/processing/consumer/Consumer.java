@@ -55,15 +55,10 @@ public class Consumer implements Runnable{
         } finally {
             if (writer != null) {
                 try {
-                    writer.flush(); // сбрасываем буфер
+                    writer.flush();
+                    writer.close();
                 } catch (IOException e) {
-                    ExceptionHandler.printInfo(topic + ": Ошибка при flush - " + e.getMessage());
-                }
-
-                try {
-                    writer.close(); // закрываем
-                } catch (IOException e) {
-                    ExceptionHandler.printError(topic + ": Ошибка при закрытии файла - " + e.getMessage());
+                    ExceptionHandler.printInfo(topic + ": Ошибка при закрытии файла - " + e.getMessage());
                 }
             }
             if (completionLatch != null)
