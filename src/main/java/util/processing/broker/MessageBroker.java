@@ -7,7 +7,6 @@ import java.util.concurrent.*;
 public class MessageBroker {
     // ConcurrentHashMap для хранения очередей по темам
     private final ConcurrentHashMap<Topic, BlockingQueue<String>> queues;
-    //private final BlockingQueue<Message> queues;
 
     public MessageBroker() {
         this.queues = new ConcurrentHashMap<>();

@@ -9,8 +9,8 @@ public class StringStatsStrategy extends BaseStatsStrategy{
     private final AtomicInteger minLength = new AtomicInteger(Integer.MAX_VALUE);
     private final AtomicInteger maxLength = new AtomicInteger(0);
 
-    public StringStatsStrategy(String topicName) {
-        super(topicName);
+    StringStatsStrategy() {
+        super(Topic.STRING.getDescription());
     }
 
     @Override
@@ -18,12 +18,12 @@ public class StringStatsStrategy extends BaseStatsStrategy{
         int length = value.length();
         count.incrementAndGet();
 
-        // Обновляем минимальную длину и самую короткую строку
+        // Обновляем минимальную длину
         minLength.updateAndGet(current -> {
             return Math.min(length, current);
         });
 
-        // Обновляем максимальную длину и самую длинную строку
+        // Обновляем максимальную длину
         maxLength.updateAndGet(current -> {
             return Math.max(length, current);
         });
@@ -36,8 +36,8 @@ public class StringStatsStrategy extends BaseStatsStrategy{
 
         if (hasData()) {
             if (statsLevel == util.config.StatsLevel.FULL) {
-                sb.append(String.format("Минимальная длина: %d\n", getMinLength()));
-                sb.append(String.format("Максимальная длина: %d\n", getMaxLength()));
+                sb.append(String.format("Минимальная длина строки: %d\n", getMinLength()));
+                sb.append(String.format("Максимальная длина строки: %d\n", getMaxLength()));
 
             }
         }

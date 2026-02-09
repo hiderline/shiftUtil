@@ -1,6 +1,7 @@
 package util.statistics;
 
 import util.config.StatsLevel;
+import util.processing.model.Topic;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -11,8 +12,8 @@ public class FloatStatsStrategy extends BaseStatsStrategy{
     private final AtomicReference<BigDecimal> max = new AtomicReference<>(null);
     private final AtomicReference<BigDecimal> sum = new AtomicReference<>(BigDecimal.ZERO);
 
-    public FloatStatsStrategy(String topicName) {
-        super(topicName);
+    FloatStatsStrategy() {
+        super(Topic.FLOAT.getDescription());
     }
 
     @Override

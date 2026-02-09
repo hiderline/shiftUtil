@@ -8,7 +8,7 @@ public abstract class BaseStatsStrategy implements StatsStrategy{
     protected final String topicName;
     protected final AtomicLong count = new AtomicLong(0);
 
-    public BaseStatsStrategy(String topicName) {
+    BaseStatsStrategy(String topicName) {
         this.topicName = topicName;
     }
 

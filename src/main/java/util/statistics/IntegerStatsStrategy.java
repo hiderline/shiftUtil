@@ -1,19 +1,20 @@
 package util.statistics;
 
 import util.config.StatsLevel;
+import util.processing.model.Topic;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
-public class IntegerStatsStrategy extends BaseStatsStrategy{
+public class IntegerStatsStrategy extends BaseStatsStrategy {
     private final AtomicReference<BigInteger> min = new AtomicReference<>(null);
     private final AtomicReference<BigInteger> max = new AtomicReference<>(null);
     private final AtomicReference<BigInteger> sum = new AtomicReference<>(BigInteger.ZERO);
 
 
-    public IntegerStatsStrategy(String topicName) {
-        super(topicName);
+    IntegerStatsStrategy() {
+        super(Topic.INTEGER.getDescription());
     }
 
     @Override
