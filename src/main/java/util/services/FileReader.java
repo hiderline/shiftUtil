@@ -12,10 +12,8 @@ public class FileReader {
     public FileReader() {
     }
     public List<String> readFileLines(String fileName) throws IOException {
-        //System.out.println(Paths.get("").toAbsolutePath());
         Path currentPath = Paths.get("")
-                .toAbsolutePath().resolve("main/resources");
-        //System.out.println(currentPath);
+                .toAbsolutePath();
         Path path = currentPath.resolve(fileName);
         return Files.readAllLines(path);
     }

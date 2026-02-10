@@ -12,11 +12,5 @@ public class ApplicationFacade {
         appConfig.setConfig(args);
         processing = new Processing(appConfig);
         processing.process();
-
-        /*System.out.println("-p: " + appConfig.getPrefOut());
-        System.out.println("-o: " + appConfig.getPathOut());
-        System.out.println("-a: " + appConfig.appendMode());
-        System.out.println("stats: " + appConfig.getStatsLevel());
-        System.out.println("files: " + appConfig.getFiles());*/
     }
 }

@@ -49,6 +49,7 @@ public class Processing {
         // Ожидаем завершения работы
         waitForCompletion();
 
+        // Вывод в консоль статистики
         for(Consumer consumer : consumers) {
             System.out.println(consumer.getStatsStrategy().getFormattedStats(config.getStatsLevel()));
         }
