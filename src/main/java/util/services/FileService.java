@@ -16,7 +16,10 @@ public class FileService {
 
     public BufferedWriter createWriter(Path filePath, boolean appendMode) throws IOException {
         // Создание директорий
-        Files.createDirectories(filePath.getParent());
+        Path parentDir = filePath.getParent();
+        if (parentDir != null) {
+            Files.createDirectories(parentDir);
+        }
 
         StandardOpenOption[] options;
         if (appendMode && Files.exists(filePath)) {
