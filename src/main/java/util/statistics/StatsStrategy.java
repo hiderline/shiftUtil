@@ -7,5 +7,4 @@ public interface StatsStrategy {
     String getFormattedStats(StatsLevel statsLevel);
     long getCount();
     boolean hasData();
-    String getTopicName();
 }

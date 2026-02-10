@@ -22,11 +22,6 @@ public abstract class BaseStatsStrategy implements StatsStrategy{
         return count.get() > 0;
     }
 
-    @Override
-    public String getTopicName() {
-        return topicName;
-    }
-
     protected String formatHeader() {
         return "=== Статистика для " + topicName + " ===\n" +
                 "Количество элементов: " + getCount() + "\n";
