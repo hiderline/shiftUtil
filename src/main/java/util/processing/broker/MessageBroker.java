@@ -7,7 +7,6 @@ import java.util.concurrent.*;
 public class MessageBroker {
     // ConcurrentHashMap для хранения очередей по темам
     private final ConcurrentHashMap<Topic, BlockingQueue<String>> queues;
-    //private final BlockingQueue<Message> queues;
 
     public MessageBroker() {
         this.queues = new ConcurrentHashMap<>();
@@ -24,7 +23,6 @@ public class MessageBroker {
 
         // Кладем сообщение в очередь соответствующей темы
         queue.put(message.getPayload());
-        System.out.println("Broker: Опубликовано сообщение " + message);
     }
 
     // Получение сообщений из очереди (pull-модель)

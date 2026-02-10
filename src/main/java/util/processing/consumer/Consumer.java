@@ -4,6 +4,8 @@ import util.exceptions.ExceptionHandler;
 import util.processing.broker.MessageBroker;
 import util.processing.model.Topic;
 import util.services.FileService;
+import util.statistics.StatsStrategy;
+import util.statistics.StatsStrategyFactory;
 
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -17,6 +19,7 @@ public class Consumer implements Runnable{
     private final Path outputFile;
     private final boolean appendMode;
     private final CountDownLatch completionLatch;
+    private final StatsStrategy statsStrategy;
     private final FileService fileService = FileService.getInstance();
 
     public Consumer(MessageBroker broker, Topic topic, Path outputFile, boolean appendMode, CountDownLatch completionLatch) {
@@ -25,6 +28,11 @@ public class Consumer implements Runnable{
         this.outputFile = outputFile;
         this.appendMode = appendMode;
         this.completionLatch = completionLatch;
+        this.statsStrategy = StatsStrategyFactory.createForTopic(topic);
+    }
+
+    public StatsStrategy getStatsStrategy() {
+        return statsStrategy;
     }
 
     @Override
@@ -41,11 +49,13 @@ public class Consumer implements Runnable{
                     break;
 
                 if (message != null) {
+                    statsStrategy.update(message);
+
                     if (!fileCreated) {
                         writer = fileService.createWriter(outputFile, appendMode);
                         fileCreated = true;
                     }
-                    System.out.println(topic + ": сообщение - " + message);
+
                     writer.write(message);
                     writer.newLine();
                 }
@@ -55,15 +65,10 @@ public class Consumer implements Runnable{
         } finally {
             if (writer != null) {
                 try {
-                    writer.flush(); // сбрасываем буфер
+                    writer.flush();
+                    writer.close();
                 } catch (IOException e) {
-                    ExceptionHandler.printInfo(topic + ": Ошибка при flush - " + e.getMessage());
-                }
-
-                try {
-                    writer.close(); // закрываем
-                } catch (IOException e) {
-                    ExceptionHandler.printError(topic + ": Ошибка при закрытии файла - " + e.getMessage());
+                    ExceptionHandler.printInfo(topic + ": Ошибка при закрытии файла - " + e.getMessage());
                 }
             }
             if (completionLatch != null)

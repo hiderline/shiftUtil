@@ -62,3 +62,7 @@ build/
 
 ### Save files ###
 output/
+*integers*
+*floats*
+*strings*
+resources/

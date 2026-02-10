@@ -55,6 +55,10 @@ public class ErrorMessages {
             );
         }
 
+        public static final String FILE_NOT_FOUND = "Файл '%s' не найден в директории main/resources";
+        public static final String PATH_IS_DIRECTORY = "'%s' является директорией, а не файлом";
+        public static final String FILE_NOT_READABLE = "Файл '%s' недоступен для чтения";
+
         public static String invalidPathSyntax(String details) {
             return "Некорректный синтаксис пути: " + details;
         }

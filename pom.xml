@@ -34,9 +34,6 @@
                     <source>21</source>
                     <target>21</target>
                     <release>21</release>
-                    <compilerArgs>--enable-preview
-                        <arg>${project.build.outputDirectory}</arg>
-                    </compilerArgs>
                 </configuration>
             </plugin>
 
@@ -48,7 +45,7 @@
                     <archive>
                         <manifest>
                             <mainClass>
-                                util/Main
+                                util.Main
                             </mainClass>
                         </manifest>
                     </archive>
