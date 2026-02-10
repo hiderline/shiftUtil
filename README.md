@@ -1,4 +1,8 @@
 # Утилита фильтрации содержимого файлов
+[![Java](https://img.shields.io/badge/Java-21-blue.svg)](https://www.oracle.com/java/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
+[![Build: Maven](https://img.shields.io/badge/Build-Maven-red.svg)](https://maven.apache.org/)
+[![GitHub](https://img.shields.io/badge/GitHub-Repository-black.svg)](https://github.com/ваш-username/bus-sorting-app)
 ### Тестовое задание
 Утилита для распределения данных из входных файлов по типам (целые числа, вещественные числа, строки) в соответствующие выходные файлы с возможностью сбора статистики.
 
