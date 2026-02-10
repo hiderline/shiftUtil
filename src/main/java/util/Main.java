@@ -3,7 +3,7 @@ package util;
 import util.exceptions.ExceptionHandler;
 
 public class Main {
-    public static void main(String[] args) throws Exception {
+    public static void main(String[] args) {
 
         try {
             new ApplicationFacade().start(args);

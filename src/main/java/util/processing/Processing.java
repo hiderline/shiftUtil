@@ -22,8 +22,6 @@ public class Processing {
     private static final int THREADS_AMOUNT = 4;
     private final CliConfig config;
     private MessageBroker broker;
-    private List<Consumer> consumers;
-    private FileProducer producer;
     private final TopicSelector topicSelector = TopicSelector.getInstance();
     private final FileService fileService = FileService.getInstance();
     private ExecutorService executorService;
@@ -39,12 +37,12 @@ public class Processing {
         executorService = Executors.newFixedThreadPool(THREADS_AMOUNT);
 
         // Запуск consumers
-        consumers = createConsumers();
+        List<Consumer> consumers = createConsumers();
         for(Consumer consumer : consumers) {
             executorService.execute(consumer);
         }
         // Запуск producer
-        producer = new FileProducer(broker, topicSelector, config.getFiles(), producerLatch);
+        FileProducer producer = new FileProducer(broker, topicSelector, config.getFiles(), producerLatch);
         executorService.execute(producer);
 
         // Ожидаем завершения работы
