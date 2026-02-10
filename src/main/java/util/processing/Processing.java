@@ -1,6 +1,7 @@
 package util.processing;
 
 import util.config.CliConfig;
+import util.config.StatsLevel;
 import util.exceptions.ExceptionHandler;
 import util.processing.broker.MessageBroker;
 import util.processing.consumer.Consumer;
@@ -50,8 +51,10 @@ public class Processing {
         waitForCompletion();
 
         // Вывод в консоль статистики
-        for(Consumer consumer : consumers) {
-            System.out.println(consumer.getStatsStrategy().getFormattedStats(config.getStatsLevel()));
+        if (config.getStatsLevel() != StatsLevel.NONE) {
+            for (Consumer consumer : consumers) {
+                System.out.println(consumer.getStatsStrategy().getFormattedStats(config.getStatsLevel()));
+            }
         }
 
         shutdownExecutor();
